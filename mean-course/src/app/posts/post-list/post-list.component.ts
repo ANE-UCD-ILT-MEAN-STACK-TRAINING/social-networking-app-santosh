@@ -2,6 +2,7 @@ import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Post } from '../post.model';
 import { PostsService } from '../posts.service';
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: 'app-post-list',
@@ -9,22 +10,55 @@ import { PostsService } from '../posts.service';
   styleUrls: ['./post-list.component.css'],
 })
 export class PostListComponent implements OnInit, OnDestroy {
+  router: any;
   constructor(public postsService: PostsService) {}
   private postSubscription: Subscription;
+  private mode = 'create';
+  private postId: string;
+  isLoading = false;
+  postsSub: any;
   @Input() posts: Post[] = [];
-  ngOnInit(): void {
+  ngOnInit() {
+    this.isLoading = true;
     this.postsService.getPosts();
-    this.postSubscription = this.postsService
+    this.postsSub = this.postsService
       .getPostUpdateListener()
-      .subscribe((postsReceived: Post[]) => {
-        this.posts = postsReceived;
+      .subscribe((posts: Post[]) => {
+        setTimeout(() => {
+          this.isLoading = false;
+        }, 2000);
+        this.posts = posts;
       });
   }
+
   ngOnDestroy() {
-    this.postSubscription.unsubscribe();
+    // this.postSubscription.unsubscribe();
+    if (this.postSubscription) {
+      this.postSubscription.unsubscribe();
+    }
+    // this.router.navigate(['/']);
+
   }
 
   onDelete(postId: string) {
     this.postsService.deletPost(postId);
+  }
+
+  onSavePost(form: NgForm) {
+    if (form.invalid) {
+      return;
+    }
+
+    this.isLoading = true;
+    if (this.mode === 'create') {
+      this.postsService.addPost(form.value.title, form.value.content);
+    } else {
+      this.postsService.updatePost(
+        this.postId,
+        form.value.title,
+        form.value.content
+      );
+    }
+    form.resetForm();
   }
 }

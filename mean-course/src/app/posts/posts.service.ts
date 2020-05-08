@@ -10,8 +10,15 @@ import { HttpClient } from '@angular/common/http';
 export class PostsService {
   private posts: Post[] = [];
   private postsUpdated = new Subject<Post[]>();
+  router: any;
 
   constructor(private http: HttpClient) {}
+
+  getPost(id: string) {
+    return this.http.get<{ _id: string; title: string; content: string }>(
+      'http://localhost:3000/api/posts/' + id
+    );
+  }
 
   getPosts() {
     this.http
@@ -53,6 +60,25 @@ export class PostsService {
       .delete('http://localhost:3000/api/posts/' + postId)
       .subscribe(() => {
         console.log('Deleted Post');
+      });
+  }
+
+  updatePost(id: string, title: string, content: string) {
+    const post: Post = { id: id, title: title, content: content };
+
+    this.http
+      .put<{ message: string; postId: string }>(
+        'http://localhost:3000/api/posts/' + id,
+        post
+      )
+      .subscribe((responseData) => {
+        console.log(responseData);
+        const updatedPosts = [...this.posts];
+        const oldPostIndex = updatedPosts.findIndex((p) => p.id === post.id);
+        updatedPosts[oldPostIndex] = post;
+        this.posts = updatedPosts;
+        this.postsUpdated.next([...this.posts]);
+        this.router.navigate(['/']);
       });
   }
 
