@@ -59,8 +59,8 @@ export class PostsService {
   deletPost(postId: string) {
     this.http
       .delete('http://localhost:3000/api/posts/' + postId)
-      .subscribe(() => {
-        console.log('Deleted Post');
+      .subscribe((responseData) => {
+        console.log(responseData);
         this.router.navigate(['/']);
       });
   }

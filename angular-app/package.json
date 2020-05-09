@@ -1,14 +1,15 @@
 {
-  "name": "mean-course",
+  "name": "angular-app",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "start-server": "node ../node-app/app.js",
+    "build": "ng build --prod",
+    "watch": "ng build --watch",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e",
-    "start-server": "node ../node-app/app.js"
+    "e2e": "ng e2e"    
   },
   "private": true,
   "dependencies": {

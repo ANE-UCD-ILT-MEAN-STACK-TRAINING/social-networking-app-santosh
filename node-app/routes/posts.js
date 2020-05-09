@@ -8,7 +8,7 @@ router.get("/:id", (req, res, next) => {
       res.status(200).json(post);
     } else {
       res.status(404).json({
-        message: "post not found",
+        message: "Post not found",
       });
     }
   });
@@ -33,14 +33,14 @@ router.post("", (req, res, next) => {
 
   console.log(post);
   res.status(201).json({
-    message: "Post added successfully",
+    message: "Post added successfully...!!!",
   });
 });
 
 router.delete("/:id", (req, res, next) => {
   Post.deleteOne({ _id: req.params.id }).then((result) => {
     console.log(result);
-    res.status(200).json({ message: "Post deleted!" });
+    res.status(200).json({ message: "Post deleted successfully...!!!" });
   });
 });
 
@@ -53,7 +53,7 @@ router.put("/:id", (req, res, next) => {
 
   Post.updateOne({ _id: req.params.id }, post).then((updatedPost) => {
     res.status(201).json({
-      message: "Post Added !!",
+      message: "Post updated successfully..!!",
       postId: updatedPost._id,
     });
   });

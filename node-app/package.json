@@ -4,6 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
+    "build": "tsc",
+    "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Santosh",
@@ -15,5 +17,9 @@
     "express": "^4.17.1",
     "mongoose": "^5.9.12",
     "nodemon": "^2.0.3"
+  },
+  "engines": {
+    "node": "12.X.X",
+    "npm": "6.X.X"
   }
 }
