@@ -3,6 +3,7 @@ import { Subject } from 'rxjs';
 import { Post } from './post.model';
 import { map } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -10,9 +11,8 @@ import { HttpClient } from '@angular/common/http';
 export class PostsService {
   private posts: Post[] = [];
   private postsUpdated = new Subject<Post[]>();
-  router: any;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   getPost(id: string) {
     return this.http.get<{ _id: string; title: string; content: string }>(
@@ -52,6 +52,7 @@ export class PostsService {
         console.log(responseData.message);
         this.posts.push(post);
         this.postsUpdated.next([...this.posts]);
+        this.router.navigate(['/']);
       });
   }
 
@@ -60,15 +61,16 @@ export class PostsService {
       .delete('http://localhost:3000/api/posts/' + postId)
       .subscribe(() => {
         console.log('Deleted Post');
+        this.router.navigate(['/']);
       });
   }
 
-  updatePost(id: string, title: string, content: string) {
-    const post: Post = { id: id, title: title, content: content };
+  updatePost(idVal: string, titleVal: string, contentVal: string) {
+    const post: Post = { id: idVal, title: titleVal, content: contentVal };
 
     this.http
       .put<{ message: string; postId: string }>(
-        'http://localhost:3000/api/posts/' + id,
+        'http://localhost:3000/api/posts/' + post.id,
         post
       )
       .subscribe((responseData) => {

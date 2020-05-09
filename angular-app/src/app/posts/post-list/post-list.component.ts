@@ -32,12 +32,9 @@ export class PostListComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    // this.postSubscription.unsubscribe();
     if (this.postSubscription) {
       this.postSubscription.unsubscribe();
     }
-    // this.router.navigate(['/']);
-
   }
 
   onDelete(postId: string) {

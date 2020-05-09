@@ -1,90 +1,33 @@
-const express = require("express");
-const app = express();
-const bodyParser = require("body-parser");
-const Post = require("./models/post");
+var express = require('express');
+var mongoose = require('mongoose');
+var bodyparser = require('body-parser');
+var cors = require('cors');
 
-var cors = require("cors");
-app.use(cors());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+var app = express();
 
-const mongoose = require("mongoose");
+const postRoutes = require('./routes/posts');
 
-mongoose
-  .connect(
-    "mongodb://localhost:27017/MyPosts?readPreference=primary&appname=MongoDB%20Compass%20Community&ssl=false"
-  )
-  .then(() => {
-    console.log("Connected to database!");
-  })
-  .catch(() => {
-    console.log("Connection failed!");
-  });
+mongoose.connect('mongodb://localhost:27017/MyPosts?readPreference=primary&appname=MongoDB%20Compass%20Community&ssl=false');
 
-app.get("/api/posts", (req, res, next) => {
-  Post.find().then((documents) => {
-    res.status(200).json({
-      message: "Posts fetched successfully!",
-      posts: documents,
-    });
-  });
-});
-
-app.get("/api/posts/:id", (req, res, next) => {
-  Post.findById(req.params.id).then((post) => {
-    if (post) {
-      res.status(200).json(post);
-    } else {
-      res.status(404).json({
-        message: "post not found",
-      });
+mongoose.connection.on('error', (err) => {
+    if(err){
+        console.log('Error occured'); 
     }
-  });
 });
 
-app.get("/api/posts", (req, res, next) => {
-  Post.find().then((documents) => {
-    res.status(200).json({
-      message: "Posts fetched successfully!",
-      posts: documents,
-    });
-  });
+mongoose.connection.on('connected', () => {
+    console.log('Connected to Mongo DB');
 });
 
-app.post("/api/posts", (req, res, next) => {
-  const post = new Post({
-    title: req.body.title,
-    content: req.body.content,
-  });
+const port = 3000;
 
-  post.save();
+app.use(cors());
 
-  console.log(post);
-  res.status(201).json({
-    message: "Post added successfully",
-  });
-});
+app.use(bodyparser.json());
+//app.use(bodyParser.urlencoded({ extended: false }));
 
-app.delete("/api/posts/:id", (req, res, next) => {
-  Post.deleteOne({ _id: req.params.id }).then((result) => {
-    console.log(result);
-    res.status(200).json({ message: "Post deleted!" });
-  });
-});
+app.use('/api/posts', postRoutes);
 
-app.put("/api/posts/:id", (req, res, next) => {
-  const post = new Post({
-    _id: req.body.id,
-    title: req.body.title,
-    content: req.body.content,
-  });
-
-  Post.updateOne({ _id: req.params.id }, post).then((updatedPost) => {
-    res.status(201).json({
-      message: "Post Added !!",
-      postId: updatedPost._id,
-    });
-  });
-});
-
-module.exports = app;
+app.listen(port, () => {
+    console.log('Server started at port: ' + port);
+})
