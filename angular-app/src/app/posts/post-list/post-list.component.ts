@@ -2,7 +2,7 @@ import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Post } from '../post.model';
 import { PostsService } from '../posts.service';
-import { NgForm } from '@angular/forms';
+import { NgForm, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-post-list',
@@ -32,13 +32,11 @@ export class PostListComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.postSubscription) {
-      this.postSubscription.unsubscribe();
-    }
+    this.postsSub.unsubscribe();
   }
 
   onDelete(postId: string) {
-    this.postsService.deletPost(postId);
+    this.postsService.deletePost(postId);
   }
 
   onSavePost(form: NgForm) {
@@ -48,12 +46,17 @@ export class PostListComponent implements OnInit, OnDestroy {
 
     this.isLoading = true;
     if (this.mode === 'create') {
-      this.postsService.addPost(form.value.title, form.value.content);
+      this.postsService.addPost(
+        form.value.title,
+        form.value.content,
+        form.value.imagePath
+      );
     } else {
       this.postsService.updatePost(
         this.postId,
         form.value.title,
-        form.value.content
+        form.value.content,
+        form.value.imagePath
       );
     }
     form.resetForm();

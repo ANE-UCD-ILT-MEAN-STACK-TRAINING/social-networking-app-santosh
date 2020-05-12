@@ -15,9 +15,12 @@ export class PostsService {
   constructor(private http: HttpClient, private router: Router) {}
 
   getPost(id: string) {
-    return this.http.get<{ _id: string; title: string; content: string }>(
-      'http://localhost:3000/api/posts/' + id
-    );
+    return this.http.get<{
+      _id: string;
+      title: string;
+      content: string;
+      imagePath: string;
+    }>('http://localhost:3000/api/posts/' + id);
   }
 
   getPosts() {
@@ -30,6 +33,7 @@ export class PostsService {
               title: post.title,
               content: post.content,
               id: post._id,
+              imagePath: post.imagePath,
             };
           });
         })
@@ -44,60 +48,75 @@ export class PostsService {
     return this.postsUpdated.asObservable();
   }
 
-  addPost(title: string, content: string) {
-    const post: Post = { id: null, title, content };
+  addPost(titleVal: string, contentVal: string, image: File) {
+    const postData = new FormData();
+    postData.append('title', titleVal);
+    postData.append('content', contentVal);
+    postData.append('image', image, titleVal);
     this.http
-      .post<{ message: string }>('http://localhost:3000/api/posts', post)
+      .post<{ message: string; post: Post }>(
+        'http://localhost:3000/api/posts',
+        postData
+      )
       .subscribe((responseData) => {
-        console.log(responseData.message);
+        const post: Post = {
+          id: responseData.post.id,
+          title: titleVal,
+          content: contentVal,
+          imagePath: responseData.post.imagePath,
+        };
         this.posts.push(post);
         this.postsUpdated.next([...this.posts]);
         this.router.navigate(['/']);
       });
   }
 
-  deletPost(postId: string) {
+  deletePost(postId: string) {
     this.http
       .delete('http://localhost:3000/api/posts/' + postId)
-      .subscribe((responseData) => {
-        console.log(responseData);
-        this.router.navigate(['/']);
+      .subscribe(() => {
+        const updatedPosts = this.posts.filter((post) => post.id !== postId);
+        this.posts = updatedPosts;
+        this.postsUpdated.next([...this.posts]);
       });
   }
 
-  updatePost(idVal: string, titleVal: string, contentVal: string) {
-    const post: Post = { id: idVal, title: titleVal, content: contentVal };
-
+  updatePost(
+    idVal: string,
+    titleVal: string,
+    contentVal: string,
+    image: File | string
+  ) {
+    let postData: Post | FormData;
+    if (typeof image === 'object') {
+      postData = new FormData();
+      postData.append('id', idVal);
+      postData.append('title', titleVal);
+      postData.append('content', contentVal);
+      postData.append('image', image, titleVal);
+    } else {
+      postData = {
+        id: idVal,
+        title: titleVal,
+        content: contentVal,
+        imagePath: image,
+      };
+    }
     this.http
-      .put<{ message: string; postId: string }>(
-        'http://localhost:3000/api/posts/' + post.id,
-        post
-      )
-      .subscribe((responseData) => {
-        console.log(responseData);
+      .put('http://localhost:3000/api/posts/' + idVal, postData)
+      .subscribe((response) => {
         const updatedPosts = [...this.posts];
-        const oldPostIndex = updatedPosts.findIndex((p) => p.id === post.id);
+        const oldPostIndex = updatedPosts.findIndex((p) => p.id === idVal);
+        const post: Post = {
+          id: idVal,
+          title: titleVal,
+          content: contentVal,
+          imagePath: '',
+        };
         updatedPosts[oldPostIndex] = post;
         this.posts = updatedPosts;
         this.postsUpdated.next([...this.posts]);
         this.router.navigate(['/']);
       });
   }
-
-  // getPosts() {
-  //   this.http
-  //     .get<{ message: string; posts: Post[] }>(
-  //       'http://localhost:3000/api/posts'
-  //     )
-  //     .subscribe(postData => {
-  //       this.posts = postData.posts;
-  //       this.postsUpdated.next([...this.posts]);
-  //     });
-  // }
-
-  // addPost(title: string, content: string) {
-  //   const post: Post = { title, content };
-  //   this.posts.push(post);
-  //   this.postsUpdated.next([...this.posts]);
-  // }
 }

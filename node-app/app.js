@@ -1,33 +1,38 @@
-var express = require('express');
-var mongoose = require('mongoose');
-var bodyparser = require('body-parser');
-var cors = require('cors');
+const express = require("express");
+const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
+const cors = require("cors");
+const path = require("path");
 
 var app = express();
 
-const postRoutes = require('./routes/posts');
+const postRoutes = require("./routes/posts");
 
-mongoose.connect('mongodb://localhost:27017/MyPosts?readPreference=primary&appname=MongoDB%20Compass%20Community&ssl=false');
+mongoose.connect(
+  "mongodb://localhost:27017/MyPosts?readPreference=primary&appname=MongoDB%20Compass%20Community&ssl=false"
+);
 
-mongoose.connection.on('error', (err) => {
-    if(err){
-        console.log('Error occured'); 
-    }
+mongoose.connection.on("error", (err) => {
+  if (err) {
+    console.log("Error occured");
+  }
 });
 
-mongoose.connection.on('connected', () => {
-    console.log('Connected to Mongo DB');
+mongoose.connection.on("connected", () => {
+  console.log("Connected to Mongo DB");
 });
 
 const port = 3000;
 
 app.use(cors());
 
-app.use(bodyparser.json());
-//app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use("/", express.static(path.join(__dirname, "images")));
+//app.use('/images', express.static(path.json('node-app/images')));
 
-app.use('/api/posts', postRoutes);
+app.use("/api/posts", postRoutes);
 
 app.listen(port, () => {
-    console.log('Server started at port: ' + port);
-})
+  console.log("Server started at port: " + port);
+});
