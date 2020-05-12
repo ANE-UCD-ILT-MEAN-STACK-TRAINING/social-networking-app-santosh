@@ -96,7 +96,7 @@ router.put(
     let imagePath = req.body.imagePath;
     if (req.file) {
       const url = req.protocol + "://" + req.get("host");
-      imagePath = url + "/images" + req.file.fieldname;
+      imagePath = url + "/images/" + req.file.fieldname;
     }
     const post = new Post({
       _id: req.body.id,
