@@ -3,10 +3,10 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const path = require("path");
+const postRoutes = require("./routes/posts");
+const userRoutes = require("./routes/user");
 
 var app = express();
-
-const postRoutes = require("./routes/posts");
 
 mongoose.connect(
   "mongodb://localhost:27017/MyPosts?readPreference=primary&appname=MongoDB%20Compass%20Community&ssl=false"
@@ -26,11 +26,20 @@ const port = 3000;
 
 app.use(cors());
 
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type, Accept');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  next();
+ });
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use("/images", express.static(path.join("images")));
 
 app.use("/api/posts", postRoutes);
+app.use("/api/user", userRoutes);
 
 app.listen(port, () => {
   console.log("Server started at port: " + port);
