@@ -5,13 +5,15 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 router.post("/login", (req, res, next) => {
+  let fetchedUser;
   User.findOne({ email: req.body.email })
     .then((user) => {
-      if (user) {
+      if (!user) {
         return res.status(401).json({
           message: "Authentication failed..!!",
         });
       }
+      fetchedUser = user;
       return bcrypt.compare(req.body.password, user.password);
     })
     .then((result) => {
@@ -28,7 +30,7 @@ router.post("/login", (req, res, next) => {
         },
         "test_secret_key",
         {
-          expireIn: "1h",
+          expiresIn: "1h",
         }
       );
       return res.status(200).json({

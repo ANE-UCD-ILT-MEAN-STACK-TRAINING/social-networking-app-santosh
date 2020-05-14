@@ -5,7 +5,6 @@ import { AuthData } from './auth-data.model';
 import { Subject } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
-
 export class AuthService {
   constructor(private http: HttpClient, private router: Router) {}
   private token: string;
@@ -50,7 +49,9 @@ export class AuthService {
 
   autoAuthUser() {
     const authInfo = this.getAuthData();
-    if (!authInfo) { return; }
+    if (!authInfo) {
+      return;
+    }
     const now = new Date();
     const expiresIn = authInfo.expirationDate.getTime() - now.getTime();
 
@@ -91,10 +92,10 @@ export class AuthService {
       });
   }
 
-  login(emailId: string, pwd: string) {
+  login(email: string, password: string) {
     const authData: AuthData = {
-      email: emailId,
-      password: pwd,
+      email: email,
+      password: password,
     };
 
     this.http
@@ -103,25 +104,16 @@ export class AuthService {
         authData
       )
       .subscribe((response) => {
+        debugger;
         console.log(response);
         const token = response.token;
         this.token = token;
 
         if (token) {
           const expiresInDuration = response.expiresIn;
-          this.tokenTimer = setTimeout(() => {
-            this.logout();
-          }, expiresInDuration * 1000);
-
           this.setAuthTimer(expiresInDuration);
           this.isAuthenticated = true;
           this.authStatusListener.next(true);
-          const now = new Date();
-          const expirationDate = new Date(
-            now.getTime() + expiresInDuration * 1000
-          );
-          this.saveAuthData(token, expirationDate);
-
           this.router.navigate(['/']);
         }
       });
