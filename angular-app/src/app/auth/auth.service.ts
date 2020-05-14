@@ -5,6 +5,7 @@ import { AuthData } from './auth-data.model';
 import { Subject } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
+
 export class AuthService {
   constructor(private http: HttpClient, private router: Router) {}
   private token: string;

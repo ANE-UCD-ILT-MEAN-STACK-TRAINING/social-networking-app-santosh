@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Post = require("../models/post");
 const multer = require("multer");
-const checkAuth = require('../middleware/check-auth');
+const checkAuth = require("../middleware/check-auth");
 
 const MIME_TYPE_MAP = {
   "image/png": "png",
@@ -26,7 +26,9 @@ const storage = multer.diskStorage({
   },
 });
 
-router.post("", checkAuth,
+router.post(
+  "",
+  checkAuth,
   multer({ storage: storage }).single("image"),
   (req, res, next) => {
     const url = req.protocol + "://" + req.get("host");
@@ -60,37 +62,30 @@ router.get("/:id", (req, res, next) => {
 });
 
 router.get("", (req, res, next) => {
-  // const pageSize = req.query.pagesize;
-  // const page = req.query.page;
   const pageSize = +req.query.pagesize;
   const currentPage = +req.query.page;
   let fetchedPosts;
   console.log(pageSize);
   console.log(currentPage);
-  const postQuery = Post.find();  
+  const postQuery = Post.find();
 
-  // if inputs are valid
   if (pageSize && currentPage) {
     postQuery.skip(pageSize * (currentPage - 1)).limit(pageSize);
   }
 
-  // postQuery.find().then((documents) => {
-  //   res.status(200).json({
-  //     message: "Posts fetched successfully!",
-  //     posts: documents,
-  //   });
-  // });
-
-  postQuery.find().then(documents => {
-    fetchedPosts = documents;
-    return Post.find().count();
-  }).then((count) => {
-    res.status(200).json({
-      message: "Posts fetched successfully!",
-      posts: fetchedPosts,
-      maxPosts: count
+  postQuery
+    .find()
+    .then((documents) => {
+      fetchedPosts = documents;
+      return Post.find().count();
+    })
+    .then((count) => {
+      res.status(200).json({
+        message: "Posts fetched successfully!",
+        posts: fetchedPosts,
+        maxPosts: count,
+      });
     });
-  });
 });
 
 router.post("", checkAuth, (req, res, next) => {
@@ -115,7 +110,8 @@ router.delete("/:id", checkAuth, (req, res, next) => {
 });
 
 router.put(
-  "/:id", checkAuth,
+  "/:id",
+  checkAuth,
   multer({ storage: storage }).single("image"),
   (req, res, next) => {
     let imagePath = req.body.imagePath;

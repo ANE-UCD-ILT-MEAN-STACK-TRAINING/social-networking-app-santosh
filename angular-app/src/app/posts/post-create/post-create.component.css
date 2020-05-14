@@ -13,7 +13,7 @@ mat-spinner {
 }
 
 Input [type="file"] {
-  Visibility: hidden;
+  visibility: hidden;
 }
 
 .image-preview {

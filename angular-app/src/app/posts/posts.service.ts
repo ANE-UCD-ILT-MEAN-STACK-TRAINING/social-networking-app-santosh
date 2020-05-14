@@ -27,7 +27,9 @@ export class PostsService {
     const queryParams = `?pagesize=${postsPerPage}&page=${currentPage}`;
 
     this.http
-      .get<{ message: string; posts: any; maxPosts: number  }>('http://localhost:3000/api/posts' + queryParams)
+      .get<{ message: string; posts: any; maxPosts: number }>(
+        'http://localhost:3000/api/posts' + queryParams
+      )
       .pipe(
         map((postData) => {
           return {
@@ -39,7 +41,7 @@ export class PostsService {
                 imagePath: post.imagePath,
               };
             }),
-            maxPosts: postData.maxPosts
+            maxPosts: postData.maxPosts,
           };
         })
       )
@@ -47,7 +49,7 @@ export class PostsService {
         this.posts = tansformedPosts.posts;
         this.postsUpdated.next({
           posts: [...this.posts],
-          postCount: tansformedPosts.maxPosts
+          postCount: tansformedPosts.maxPosts,
         });
         // this.router.navigate(['/']);
       });
@@ -82,11 +84,11 @@ export class PostsService {
 
   deletePost(postId: string) {
     return this.http.delete('http://localhost:3000/api/posts/' + postId);
-      // .subscribe(() => {
-      //   const updatedPosts = this.posts.filter((post) => post.id !== postId);
-      //   this.posts = updatedPosts;
-      //   this.postsUpdated.next([...this.posts]);
-      // });
+    // .subscribe(() => {
+    //   const updatedPosts = this.posts.filter((post) => post.id !== postId);
+    //   this.posts = updatedPosts;
+    //   this.postsUpdated.next([...this.posts]);
+    // });
   }
 
   updatePost(
