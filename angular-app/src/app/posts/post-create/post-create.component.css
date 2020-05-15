@@ -12,7 +12,7 @@ mat-spinner {
   margin: auto;
 }
 
-Input [type="file"] {
+input[type="file"] {
   visibility: hidden;
 }
 

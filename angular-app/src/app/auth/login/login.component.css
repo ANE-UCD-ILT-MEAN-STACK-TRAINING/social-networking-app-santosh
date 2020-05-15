@@ -12,3 +12,9 @@ mat-form-field {
 mat-spinner {
   margin: auto;
 }
+
+h1 {
+  color: darkorange;
+  text-align: center;
+  font-weight: bolder;
+}
