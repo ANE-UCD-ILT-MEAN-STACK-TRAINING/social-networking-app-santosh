@@ -20,6 +20,7 @@ export class PostsService {
       title: string;
       content: string;
       imagePath: string;
+      creator: string;
     }>('http://localhost:3000/api/posts/' + id);
   }
 
@@ -39,6 +40,7 @@ export class PostsService {
                 content: post.content,
                 id: post._id,
                 imagePath: post.imagePath,
+                creator: post.creator
               };
             }),
             maxPosts: postData.maxPosts,
@@ -110,6 +112,7 @@ export class PostsService {
         title: titleVal,
         content: contentVal,
         imagePath: image,
+        creator: null
       };
     }
     this.http
@@ -122,6 +125,7 @@ export class PostsService {
           title: titleVal,
           content: contentVal,
           imagePath: '',
+          creator: null
         };
         updatedPosts[oldPostIndex] = post;
         this.posts = updatedPosts;

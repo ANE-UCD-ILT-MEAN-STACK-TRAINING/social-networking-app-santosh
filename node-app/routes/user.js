@@ -28,7 +28,7 @@ router.post("/login", (req, res, next) => {
           email: fetchedUser.email,
           userId: fetchedUser._id,
         },
-        "test_secret_key",
+        "secret_this_should_be_longer",
         {
           expiresIn: "1h",
         }
@@ -36,6 +36,7 @@ router.post("/login", (req, res, next) => {
       return res.status(200).json({
         token: token,
         expiresIn: 3600,
+        userId: fetchedUser._id
       });
     })
     .catch((err) => {
