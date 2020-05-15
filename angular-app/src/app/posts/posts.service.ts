@@ -40,7 +40,7 @@ export class PostsService {
                 content: post.content,
                 id: post._id,
                 imagePath: post.imagePath,
-                creator: post.creator
+                creator: post.creator,
               };
             }),
             maxPosts: postData.maxPosts,
@@ -53,7 +53,6 @@ export class PostsService {
           posts: [...this.posts],
           postCount: tansformedPosts.maxPosts,
         });
-        // this.router.navigate(['/']);
       });
   }
 
@@ -72,25 +71,12 @@ export class PostsService {
         postData
       )
       .subscribe((responseData) => {
-        // const post: Post = {
-        //   id: responseData.post.id,
-        //   title: titleVal,
-        //   content: contentVal,
-        //   imagePath: responseData.post.imagePath,
-        // };
-        // this.posts.push(post);
-        // this.postsUpdated.next([...this.posts]);
         this.router.navigate(['/']);
       });
   }
 
   deletePost(postId: string) {
     return this.http.delete('http://localhost:3000/api/posts/' + postId);
-    // .subscribe(() => {
-    //   const updatedPosts = this.posts.filter((post) => post.id !== postId);
-    //   this.posts = updatedPosts;
-    //   this.postsUpdated.next([...this.posts]);
-    // });
   }
 
   updatePost(
@@ -112,7 +98,7 @@ export class PostsService {
         title: titleVal,
         content: contentVal,
         imagePath: image,
-        creator: null
+        creator: null,
       };
     }
     this.http
@@ -125,11 +111,10 @@ export class PostsService {
           title: titleVal,
           content: contentVal,
           imagePath: '',
-          creator: null
+          creator: null,
         };
         updatedPosts[oldPostIndex] = post;
         this.posts = updatedPosts;
-        // this.postsUpdated.next([...this.posts]);
         this.router.navigate(['/']);
       });
   }
